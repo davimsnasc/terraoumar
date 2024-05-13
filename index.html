@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terra ou Mar?</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    
+    
+        <p>Insira Latitude e Longitude para saber se o ponto está na Terra ou Oceano:</p>
+        <form id="waterForm">
+        <label for="latitude">Latitude:</label><br>
+        <input type="text" id="latitude" name="latitude" required><br><br>
+        <label for="longitude">Longitude:</label><br>
+        <input type="text" id="longitude" name="longitude" required><br><br>
+        <button type="submit">Consultar</button>
+    </form>
+
+    <div id="response"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const form = document.getElementById('waterForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const latitude = document.getElementById('latitude').value;
+    const longitude = document.getElementById('longitude').value;
+
+    try {
+        const response = await axios.get('https://isitwater-com.p.rapidapi.com/', {
+            params: { latitude, longitude },
+            headers: {
+                'X-RapidAPI-Key': '5c703bda84msh17b94266103550fp1ddbcejsn27d780b504db',
+                'X-RapidAPI-Host': 'isitwater-com.p.rapidapi.com'
+            }
+        });
+        
+        const { water, latitude: returnedLatitude, longitude: returnedLongitude } = response.data;
+
+        if (water) {
+            document.body.style.backgroundImage = "url('https://i.imgur.com/4bSKZ8E.png')";
+        } else {
+            document.body.style.backgroundImage = "url('https://i.imgur.com/NnEmXFS.png')";
+        }
+
+        
+        console.log('Latitude retornada:', returnedLatitude);
+        console.log('Longitude retornada:', returnedLongitude);
+    } catch (error) {
+        console.error(error);
+        responseDiv.innerHTML = `<p>Erro ao consultar a API.</p>`;
+    }
+});
+
+</script>
+
+</body>
+</html>
